@@ -27,53 +27,53 @@
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <AsfFrameworkConfig>
       <framework-data xmlns="">
-  <options />
-  <configurations />
-  <files />
-  <documentation help="" />
-  <offline-documentation help="" />
-  <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.11.0" />
-  </dependencies>
-</framework-data>
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.11.0" />
+        </dependencies>
+      </framework-data>
     </AsfFrameworkConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGccCpp>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>NDEBUG</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcccpp.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>NDEBUG</Value>
-    </ListValues>
-  </avrgcccpp.compiler.symbols.DefSymbols>
-  <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
-  <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
-  <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
-  <avrgcccpp.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-    </ListValues>
-  </avrgcccpp.linker.libraries.Libraries>
-  <avrgcccpp.linker.memorysettings.Comment>&lt;segmentname&gt;=&lt;address&gt;, for example  .boot=0xff</avrgcccpp.linker.memorysettings.Comment>
-</AvrGccCpp>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcccpp.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcccpp.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </avrgcccpp.compiler.symbols.DefSymbols>
+        <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
+        <avrgcccpp.compiler.optimization.PackStructureMembers>True</avrgcccpp.compiler.optimization.PackStructureMembers>
+        <avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcccpp.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcccpp.compiler.warnings.AllWarnings>True</avrgcccpp.compiler.warnings.AllWarnings>
+        <avrgcccpp.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+          </ListValues>
+        </avrgcccpp.linker.libraries.Libraries>
+        <avrgcccpp.linker.memorysettings.Comment>&lt;segmentname&gt;=&lt;address&gt;, for example  .boot=0xff</avrgcccpp.linker.memorysettings.Comment>
+      </AvrGccCpp>
     </ToolchainSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -113,6 +113,12 @@
     <ListValues>
       <Value>C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino</Value>
       <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
+      <Value>../libs/OneWire</Value>
+      <Value>../libs/DS18B20</Value>
+      <Value>../libs/WiFi</Value>
+      <Value>../libs/WiFi/utility</Value>
+      <Value>../libs/MQTT</Value>
+      <Value>../libs/EEPROM</Value>
     </ListValues>
   </avrgcccpp.compiler.directories.IncludePaths>
   <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
@@ -138,9 +144,120 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="EEPROMSaver.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="EEPROMSaver.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ErrorCodes.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\EEPROM\EEPROM.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\EEPROM\EEPROM.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\debug.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\server_drv.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\server_drv.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\socket.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\socket.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\spi_drv.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\spi_drv.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\wifi_drv.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\wifi_drv.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\wifi_spi.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\wl_definitions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\utility\wl_types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="TempSensor.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\DS18B20\DallasTemperature.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\DS18B20\DallasTemperature.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\MQTT\PubSubClient.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\MQTT\PubSubClient.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\OneWire\OneWire.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\OneWire\OneWire.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\WiFi.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\WiFi.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\WiFiClient.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\WiFiClient.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\WiFiServer.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\WiFiServer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\WiFiUdp.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\WiFi\WiFiUdp.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="MQTT_Module.cpp">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="TempSensor.h">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="libs" />
+    <Folder Include="libs\DS18B20" />
+    <Folder Include="libs\MQTT" />
+    <Folder Include="libs\EEPROM" />
+    <Folder Include="libs\WiFi" />
+    <Folder Include="libs\OneWire" />
+    <Folder Include="libs\WiFi\utility" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
