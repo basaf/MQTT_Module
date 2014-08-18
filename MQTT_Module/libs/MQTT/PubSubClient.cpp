@@ -119,7 +119,7 @@ boolean PubSubClient::connect(char *id, char *user, char *pass, char* willTopic,
             unsigned long t = millis();
             if (t-lastInActivity > MQTT_KEEPALIVE*1000UL) {
                _client->stop();
-               return false;
+			   return false;
             }
          }
          uint8_t llen;
@@ -192,6 +192,7 @@ uint16_t PubSubClient::readPacket(uint8_t* lengthLength) {
 }
 
 boolean PubSubClient::loop() {
+  
    if (connected()) {
       unsigned long t = millis();
       if ((t - lastInActivity > MQTT_KEEPALIVE*1000UL) || (t - lastOutActivity > MQTT_KEEPALIVE*1000UL)) {
@@ -208,7 +209,7 @@ boolean PubSubClient::loop() {
          }
       }
       if (_client->available()) {
-         uint8_t llen;
+		 uint8_t llen;
          uint16_t len = readPacket(&llen);
          uint16_t msgId = 0;
          uint8_t *payload;
@@ -420,7 +421,8 @@ boolean PubSubClient::connected() {
       rc = false;
    } else {
       rc = (int)_client->connected();
-      if (!rc) _client->stop();
+	  //Serial.println(rc); //it is 0 the first time it is called!!!
+      //if (!rc) _client->stop();	//TODO Generating a Bug because of the WiFi Client Library http://stackoverflow.com/questions/20339952/mosquitto-socket-read-error-arduino-client
    }
    return rc;
 }

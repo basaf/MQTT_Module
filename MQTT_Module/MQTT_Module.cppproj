@@ -37,6 +37,20 @@
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
+    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
+    <com_atmel_avrdbg_tool_simulator>
+      <ToolOptions xmlns="">
+        <InterfaceProperties>
+          <JtagEnableExtResetOnStartSession>false</JtagEnableExtResetOnStartSession>
+        </InterfaceProperties>
+        <InterfaceName>
+        </InterfaceName>
+      </ToolOptions>
+      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolNumber xmlns="">
+      </ToolNumber>
+      <ToolName xmlns="">Simulator</ToolName>
+    </com_atmel_avrdbg_tool_simulator>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -94,6 +108,12 @@
     <ListValues>
       <Value>C:\Program Files (x86)\Arduino\ArduinoCoreFiles</Value>
       <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
+      <Value>../libs/DS18B20</Value>
+      <Value>../libs/EEPROM</Value>
+      <Value>../libs/MQTT</Value>
+      <Value>../libs/OneWire</Value>
+      <Value>../libs/WiFi</Value>
+      <Value>../libs/WiFi/utility</Value>
     </ListValues>
   </avrgcc.compiler.directories.IncludePaths>
   <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
@@ -113,12 +133,13 @@
     <ListValues>
       <Value>C:\Program Files (x86)\Arduino\hardware\arduino\cores\arduino</Value>
       <Value>C:\Program Files (x86)\Arduino\hardware\arduino\variants\standard</Value>
-      <Value>../libs/OneWire</Value>
-      <Value>../libs/DS18B20</Value>
       <Value>../libs/WiFi</Value>
       <Value>../libs/WiFi/utility</Value>
+      <Value>../libs/OneWire</Value>
+      <Value>../libs/DS18B20</Value>
       <Value>../libs/MQTT</Value>
       <Value>../libs/EEPROM</Value>
+      <Value>../libs/MemoryWatch</Value>
     </ListValues>
   </avrgcccpp.compiler.directories.IncludePaths>
   <avrgcccpp.compiler.optimization.level>Optimize for size (-Os)</avrgcccpp.compiler.optimization.level>
@@ -129,8 +150,8 @@
   <avrgcccpp.compiler.miscellaneous.OtherFlags>-fno-exceptions -fno-caller-saves</avrgcccpp.compiler.miscellaneous.OtherFlags>
   <avrgcccpp.linker.libraries.Libraries>
     <ListValues>
-      <Value>libm</Value>
       <Value>libcore</Value>
+      <Value>libm</Value>
     </ListValues>
   </avrgcccpp.linker.libraries.Libraries>
   <avrgcccpp.linker.libraries.LibrarySearchPaths>
@@ -139,11 +160,15 @@
     </ListValues>
   </avrgcccpp.linker.libraries.LibrarySearchPaths>
   <avrgcccpp.linker.memorysettings.Comment>&lt;segmentname&gt;=&lt;address&gt;, for example  .boot=0xff</avrgcccpp.linker.memorysettings.Comment>
+  <avrgcccpp.linker.miscellaneous.LinkerFlags>-Wl,-V</avrgcccpp.linker.miscellaneous.LinkerFlags>
   <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
 </AvrGccCpp>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Config.cpp">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Config.h">
       <SubType>compile</SubType>
     </Compile>
@@ -160,6 +185,18 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="libs\EEPROM\EEPROM.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\MemoryWatch\MemoryFree.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\MemoryWatch\MemoryFree.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\MemoryWatch\pgmStrToRAM.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="libs\MemoryWatch\pgmStrToRAM.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="libs\WiFi\utility\debug.h">
@@ -196,6 +233,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="libs\WiFi\utility\wl_types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MQTTHandler.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MQTTHandler.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="TempSensor.cpp">
@@ -249,12 +292,19 @@
     <Compile Include="TempSensor.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="WifiCommunicator.cpp">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="WifiCommunicator.h">
+      <SubType>compile</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="libs" />
     <Folder Include="libs\DS18B20" />
     <Folder Include="libs\MQTT" />
     <Folder Include="libs\EEPROM" />
+    <Folder Include="libs\MemoryWatch" />
     <Folder Include="libs\WiFi" />
     <Folder Include="libs\OneWire" />
     <Folder Include="libs\WiFi\utility" />

@@ -7,9 +7,10 @@
 
 
 #include "TempSensor.h"
-
-//Internal Includes
 #include "EEPROMSaver.h"
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
 
 //Global Variables
 OneWire oneWire(ONE_WIRE_BUS_PIN);
@@ -21,14 +22,14 @@ error_t createAddressTable(void);
 error_t mergeTables(tempSensorTable_t *eepromTable, tempSensorTable_t *currentTable);
 tableEntry_t* serachAddressInTable(const uint8_t address[8], tempSensorTable_t *table);
 tableEntry_t* serachIdInSensorTable(const uint8_t id, tempSensorTable_t *table);
-void printTable(tempSensorTable_t table);
+
 
 /**
 *	\brief Initializes the temperature sensors with the standard
 *		resolution.
 */
 void tempSenosrsInit(void){	
-	tempSenosrsInit(0);
+	tempSenosrsInit(DEFAULT_RESOLUTION);
 	
 }
 /**
@@ -38,16 +39,18 @@ void tempSenosrsInit(const uint8_t resolution){
 	sensors.begin();
 	if(resolution >= 9 && resolution <=12){
 		sensors.setResolution(resolution);
+		Serial.println(F("Setting resolution to ")); Serial.print(resolution); Serial.println(F(" bit"));
 	}
 	else{
 		//default is 10-bit
-		sensors.setResolution(10);
+		Serial.println(F("Setting default resolution of temperature sensors"));
+		sensors.setResolution(DEFAULT_RESOLUTION);
 	}
-	Serial.print(F("Create address table for OneWire sensors... "));
+	
+	Serial.println(F("Create address table for OneWire sensors..."));
 	createAddressTable();
 	
-	
-	Serial.print(F("Temperature Sensors initialized @ pin ")); Serial.println(ONE_WIRE_BUS_PIN);
+	Serial.print(F("Temperature Sensors initialized @ pin ")); Serial.println(ONE_WIRE_BUS_PIN); 
 }
 /**
 *	\brief Reads all connected temperature sensors.
@@ -108,6 +111,23 @@ void tempSensorsPrintInfo(void){
 		}
 	
 }
+/**
+*	\brief Prints the current values in the temperature sensor table
+*/
+void tempSensorPrintTable(){
+	
+	for(int i=0; i< tempSensorTable.size; i++){
+		for(int j=0; j<8;j++){
+			Serial.print(tempSensorTable.tableEntry[i].address[j],HEX);
+			Serial.print(F(":"));
+		}
+		
+		Serial.print(" - "); Serial.print(tempSensorTable.tableEntry[i].tempSensorID);
+		Serial.print(" - "); Serial.print(tempSensorTable.tableEntry[i].sensorValue);
+		Serial.print(" - "); Serial.println(tempSensorTable.tableEntry[i].state);
+	}
+}
+
 
 /**
 *	\brief Creates a table with all sensors which are connected via OneWire.
@@ -124,11 +144,13 @@ error_t createAddressTable(void){
 	tempSensorTable_t eepromTable;
 	
 	memset(&tempSensorTable,0,sizeof(tempSensorTable_t));
+	
 	int8_t deviceCount=sensors.getDeviceCount();
 	for(int i=0; i<deviceCount; i++){
 		if(sensors.getAddress(address, i)){
 			memcpy(tempSensorTable.tableEntry[index].address,address,sizeof(address));
 			tempSensorTable.tableEntry[index].tempSensorID=i;
+			tempSensorTable.tableEntry[index].state=1;		//default: send temp sensor value
 			++index;	
 		}
 	}
@@ -214,7 +236,7 @@ tableEntry_t* serachAddressInTable(const uint8_t address[8], tempSensorTable_t *
 *		A pointer to the found entry is returned.
 */
 tableEntry_t * serachIdInSensorTable(const uint8_t id, tempSensorTable_t* table){
-	Serial.print("Search for "); Serial.println(id);
+
 	for(int i=0; i< table->size; i++){
 		if(table->tableEntry[i].tempSensorID==id){
 			return &(table->tableEntry[i]);
@@ -223,25 +245,32 @@ tableEntry_t * serachIdInSensorTable(const uint8_t id, tempSensorTable_t* table)
 	return NULL;
 }
 /**
-*	\brief Prints a sensor table
-*		This is only for debugging.
+*	\brief Sets the state of every temperature sensor to OFF
+*		
 */
-void printTable(tempSensorTable_t table){
+error_t turnAllTempSensorsOff(){
 	
-	for(int i=0; i< table.size; i++){
-		for(int j=0; j<8;j++){
-			Serial.print(table.tableEntry[i].address[j],HEX); 
-		}
-		
-		Serial.print(" - "); Serial.println(table.tableEntry[i].tempSensorID);
-		delay(50);
+	for(int i=0; i < tempSensorTable.size;i++){
+		tempSensorTable.tableEntry[i].state=0;
 	}
-	
+	return ERR_NO_ERR;
 }
+
+/**
+*	\brief Sets the state of every temperature sensor to ON
+*
+*/
+error_t turnAllTempSensorsOn(){
+	for(int i=0; i < tempSensorTable.size;i++){
+		tempSensorTable.tableEntry[i].state=1;
+	}
+	return ERR_NO_ERR;
+}
+
 
 void testMergeTable(){
 	
-	printTable(tempSensorTable);
+	tempSensorPrintTable();
 	//tableEntry_t entryA1={{'A','\0',' ',' ',' ',' ',' ',' '},1,0};
 	//tableEntry_t entryA2={{'B','\0',' ',' ',' ',' ',' ',' '},2,0};
 	//tableEntry_t entryA3={{'C','\0',' ',' ',' ',' ',' ',' '},3,13};

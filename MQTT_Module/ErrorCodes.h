@@ -19,6 +19,8 @@
 
 typedef unsigned int error_t;
 
+#define EXIT (-1)
+
 //Codes
 #define ERR_NO_ERR			0x0
 
@@ -28,9 +30,10 @@ typedef unsigned int error_t;
 #define ERR_UDP_CONNECTION  0x1003
 
 //EEPROM
-#define ERR_EEPROM_NO_VALID_TEMP_SENSOR_TABLE 0x2001
-#define ERR_EEPROM_LOAD 0x2002
-
+#define ERR_EEPROM_NO_VALID_FLAG 0x2001
+#define ERR_EEPROM_NO_VALID_TEMP_SENSOR_TABLE 0x2002
+#define ERR_EEPROM_NO_VALID_CONFIG 0x2002
+#define ERR_EEPROM_LOAD 0x2004
 
 
 
