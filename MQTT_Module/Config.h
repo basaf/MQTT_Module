@@ -36,7 +36,7 @@ struct config_s{					/*!<The struct holds the attributes, which can be configure
 	char pass[PASS_LENGTH_MAX];			/*!< Password for the WiFi-Network*/
 	//
 	uint8_t resolution;
-	uint8_t sendInterval;
+	uint32_t sendInterval;			/*!< Defines the periode in ms between two valus which are sent*/
 	uint8_t id;						/*!< the global id of the arduino modules*/
 	
 
@@ -45,6 +45,7 @@ struct config_s{					/*!<The struct holds the attributes, which can be configure
 
 //Prototype
 void configInit(void);
-error_t setGlobalId(uint8_t id);
+//error_t setGlobalId(uint8_t id);
+//error_t setSendInterval(const uint32_t pInterval)
 
 #endif /* CONFIG_H_ */

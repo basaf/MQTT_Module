@@ -15,7 +15,8 @@ void sendConfig(config_t *pConfig);
 error_t checkForSerialControlString();
 error_t configMode(void);
 error_t checkGlobalConfig(void);
-
+error_t setGlobalId(uint8_t id);
+error_t setSendInterval(const uint32_t pInterval);
 //Globals
 config_t globalConfig;
 
@@ -108,10 +109,32 @@ error_t checkForSerialControlString(){
 		else if(!strcmp(buffer, "rm sensors states")){
 			turnAllTempSensorsOff();
 		}
-		else if(!strcmp(buffer, "set id")){
-			
+		else if(strstr(buffer, "set id")){
+			char * ptr;
+			uint8_t id;
+			int sens;
+			strtok(buffer," ");
+			strtok(NULL," ");
+			ptr=strtok(NULL," ");
+			if(ptr != NULL){
+				//convert
+				id=atoi(ptr);
+				setGlobalId(id);
+			}
 		}
-//
+		else if(strstr(buffer, "set interval")){
+			char * ptr;
+			uint32_t time;
+			int sens;
+			strtok(buffer," ");
+			strtok(NULL," ");
+			ptr=strtok(NULL," ");
+			if(ptr != NULL){
+				//convert
+				time=atoi(ptr);
+				setSendInterval(time);
+			}
+		}
 		//else if(!strcmp(buffer, "set debug")){
 			//debug=true;
 		//}
@@ -126,7 +149,8 @@ error_t checkForSerialControlString(){
 			Serial.println(F("delete config - deletes the whole config from the EEPROM"));
 			Serial.println(F("set sensors states - every sensor value will be transmitted"));
 			Serial.println(F("rm sensors states - no sensor value will be transmitted"));
-			Serial.println(F("set id - sets the global ID of the node"));
+			Serial.println(F("set id <newID>- sets the global ID of the node"));
+			Serial.println(F("set interval <time>- sets the send intval in milliseconds"));
 			//Serial.println(F("set debug - prints the current sensor values when the are sent"));
 			//Serial.println(F("rm debug - disable the printing of they sensor values"));
 			Serial.println(F("exit - leaves the config mode"));
@@ -151,6 +175,8 @@ void sendConfig(config_t *pConfig){
 	Serial.println(pConfig->ssid);
 	Serial.print(F("Pass: "));
 	Serial.println(pConfig->pass);
+	Serial.print(F("Global ID: "));
+	Serial.println(pConfig->id);
 	Serial.print(F("Send interval: "));
 	Serial.println(pConfig->sendInterval);
 	Serial.print(F("Resolution: "));
@@ -174,7 +200,7 @@ void resetConfig(config_t *pConfig){
 	snprintf(pConfig->pass,PASS_LENGTH_MAX,"ArduinoNet");
 	snprintf(pConfig->ssid,SSID_LENGTH_MAX,"ArduinoNet");
 	pConfig->resolution=10;
-	pConfig->sendInterval=60;
+	pConfig->sendInterval=30000;
 	pConfig->version=1;
 	pConfig->id=99;
 	//turn all sensors Off
@@ -189,7 +215,17 @@ void resetConfig(config_t *pConfig){
 error_t setGlobalId(uint8_t id){
 	
 	globalConfig.id=id;
+	writeConfigToEEPROM(&globalConfig);
+	return ERR_NO_ERR;
+}
+
+/*!
+*
+*/
+error_t setSendInterval(const uint32_t pInterval){
 	
+	globalConfig.sendInterval=pInterval;
+	writeConfigToEEPROM(&globalConfig);
 	return ERR_NO_ERR;
 }
 

@@ -6,16 +6,17 @@
  */ 
 
 #include "MQTTHandler.h"
+#include <stdio.h>
 #include <PubSubClient.h>
 #include <WiFi.h>
 #include "TempSensor.h"
-#include "MemoryFree.h"
+//#include "MemoryFree.h"
 #include "Config.h"
-#include <string.h>
+#include <stdlib.h>
 
 //Prototypes
-char *ftoa(char *a, double f, int precision);
 void callback(char* topic, byte* payload, unsigned int length);
+error_t connectAndSubscribe();
 
 //globals
 WiFiClient wifiClient ;
@@ -25,9 +26,6 @@ byte server[] = { 192, 168, 75, 50 }; //default Ip
 extern tempSensorTable_t tempSensorTable;
 extern config_t globalConfig;
 
-
-
-
 error_t mqttInit(void){
 	return mqttInit(server,MQTT_DEFAULT_PORT);
 }
@@ -35,25 +33,41 @@ error_t mqttInit(void){
 error_t mqttInit(uint8_t pServer[4], uint16_t pPort){
 	
 	mqttClient=PubSubClient(pServer, pPort, callback, wifiClient);
-	if (mqttClient.connect("arduinoClient")){	//TODO: CHANGE
-		Serial.println(F("MQTT initialized"));
-		mqttClient.publish("blackboard/arduino1/out","Hello I am Arduino 1");
-	}
-	else{
+	error_t error=connectAndSubscribe();
+	if (error){
 		Serial.println(F("MQTT initial connection Failed!"));
+		return error;
 	}
+		
 	return ERR_NO_ERR;
 }
 
 error_t checkConnectionAndReconnectMQTT(){
-	
+
 	if(!mqttClient.connected()) {
-		Serial.println(F("CONNECTION LOST"));
-		mqttClient.connect("arduinoClient");	//TODO: CHANGE
-		mqttClient.publish("blackboard/arduino1/out","Hello I am Arduino 1");
-		//mqttClient.subscribe("blackboard/#");
-		Serial.println(F("subscribed to blackboard/#"));
+		Serial.println(F("Connection lost. Reconnect..."));
+		connectAndSubscribe();	
 	}
+	
+	return ERR_NO_ERR;
+}
+
+error_t connectAndSubscribe(void){
+	
+	char topic[MQTT_MAX_TOPIC_LENGTH];
+	char clientName[10];
+	
+	snprintf(topic,sizeof(topic),"/asn/info/%i",globalConfig.id);
+	snprintf(clientName,sizeof(clientName),"node_%i",globalConfig.id);
+	
+	if(!mqttClient.connect(clientName)){
+		return ERR_MQTT_CONNECTION;
+	}
+	mqttClient.publish(topic,"Hello");
+	
+	//topic for subscribing
+	snprintf(topic,sizeof(topic),"/asn/config/%i",globalConfig.id);
+	mqttClient.subscribe(topic);
 	
 	return ERR_NO_ERR;
 }
@@ -65,54 +79,22 @@ void mqttLoopFunction(){
 }
 
 error_t mqttSendTemp(){
-	String valueString;
-	String topicString;
-	String globalIdString,sensorIdString;
-	char *topic;
-	char sensorValue_cA[10];
-	
-	globalIdString=String(globalConfig.id);
-	
-	Serial.print(F("Free memory topic1: "));
-	Serial.println(freeMemory());	
-	
-	
+
+	char topic_s[MQTT_MAX_TOPIC_LENGTH];
+	char sensorValue_s[MQTT_MAX_VALUE_STRING_LENGTH];
 	
 	for(int i=0; i<tempSensorTable.size;i++){
 		if(tempSensorTable.tableEntry[i].state == 1){
-			topicString=String(MQTT_TOPIC_ROOT);
-			topicString=topicString+globalIdString+"/temp/";
-			sensorIdString=String(tempSensorTable.tableEntry[i].tempSensorID);
-			topicString=topicString+sensorIdString+"/value";
-			topic=(char*)topicString.c_str();
-			Serial.println(topic);
+
+			snprintf(topic_s,sizeof(topic_s),"/asn/%i/temp/%i/value",globalConfig.id,tempSensorTable.tableEntry[i].tempSensorID);
 			
-			ftoa(sensorValue_cA, tempSensorTable.tableEntry[i].sensorValue, 2);
-			//mqttClient.publish(topic,);
-			mqttClient.publish(topic,sensorValue_cA);
-			
-			Serial.print(F("Free memory topic1: "));
-			Serial.println(freeMemory());
-			
+			dtostrf(tempSensorTable.tableEntry[i].sensorValue,sizeof(sensorValue_s)-3,2,sensorValue_s); //-3 -> for "-","."and "\0"
+			mqttClient.publish(topic_s,sensorValue_s);
+						
 		}
 	}
 }
 
-/*!
-*	\brief Converts a float into a string
-*/
-char *ftoa(char *a, double f, int precision){
-	long p[] = {0,10,100,1000,10000,100000,1000000,10000000,100000000};
-	
-	char *ret = a;
-	long heiltal = (long)f;
-	itoa(heiltal, a, 10);
-	while (*a != '\0') a++;
-	*a++ = '.';
-	long desimal = abs((long)((f - heiltal) * p[precision]));
-	itoa(desimal, a, 10);
-	return ret;
-}
 
 //The callback function is call, if we receive any message
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -122,6 +104,4 @@ void callback(char* topic, byte* payload, unsigned int length) {
 	
 	Serial.write(payload,length);
 	Serial.println("");
-
-	
 }

@@ -14,9 +14,9 @@
 #include <Arduino.h>
 
 #define MQTT_DEFAULT_PORT 1883
-#define MQTT_MAX_VALUE_STRING_LENGTH 10
+#define MQTT_MAX_VALUE_STRING_LENGTH 15
 #define MQTT_MAX_TOPIC_LENGTH 150
-#define MQTT_TOPIC_ROOT "asm/" 
+#define MQTT_TOPIC_ROOT "asn/" 
 
 error_t mqttInit(void);
 error_t mqttInit(uint8_t pServer[4], uint16_t pPort);

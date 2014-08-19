@@ -32,7 +32,6 @@ void setup() {
 
 	Serial.begin(9600);
 	
-	
 	Serial.print(F("Free memory1: "));
 	Serial.println(freeMemory());
 	delay(200);
@@ -46,15 +45,17 @@ void setup() {
 	Serial.println(F("Initialization done"));
 }
 void loop() {
-
+	unsigned long now;
+	static unsigned long lastSendTime;
 	checkConnectionAndReconnectMQTT();
-		
-	tempSensorRead();
-	tempSensorPrintTable();
- 	
-	mqttSendTemp();
 	
-	Serial.println("------------");
-	delay(7000);
+	now=millis();
+	if((now-lastSendTime) >=globalConfig.sendInterval){	//the overflow of millis() is not harming the calculation
+		tempSensorRead();
+		tempSensorPrintTable();
+		mqttSendTemp();
+		Serial.println("------------");
+		lastSendTime=now;
+	}
 	mqttLoopFunction();	//MQTT client loop processing for keep alive messages
 }

@@ -35,6 +35,8 @@ typedef unsigned int error_t;
 #define ERR_EEPROM_NO_VALID_CONFIG 0x2002
 #define ERR_EEPROM_LOAD 0x2004
 
+//MQTT
+#define ERR_MQTT_CONNECTION 0x3001
 
 
 #endif /* ERRORCODES_H_ */
