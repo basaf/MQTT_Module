@@ -17,6 +17,7 @@
 //Prototypes
 void callback(char* topic, byte* payload, unsigned int length);
 error_t connectAndSubscribe();
+void removeSpacesFromString(char *pString, uint16_t pStringLength);
 
 //globals
 WiFiClient wifiClient ;
@@ -89,12 +90,48 @@ error_t mqttSendTemp(){
 			snprintf(topic_s,sizeof(topic_s),"/asn/%i/temp/%i/value",globalConfig.id,tempSensorTable.tableEntry[i].tempSensorID);
 			
 			dtostrf(tempSensorTable.tableEntry[i].sensorValue,sizeof(sensorValue_s)-3,2,sensorValue_s); //-3 -> for "-","."and "\0"
+			removeSpacesFromString(sensorValue_s,sizeof(sensorValue_s));
 			mqttClient.publish(topic_s,sensorValue_s);
 						
 		}
 	}
 }
 
+
+void removeSpacesFromString(char *pString, uint16_t pStringLength){
+	char *readPointer=pString;
+	char *writePointer=pString;
+	uint16_t i=0;
+	char state=0;
+		
+	for(i=0; i<pStringLength;i++){ //walk thought the string
+		
+		switch (state){
+			//find first empty space
+			case 0:	if(*readPointer== ' '){
+						writePointer=readPointer;
+						state=1;
+					}
+					break;
+			//find next character after space
+			case 1: if(*readPointer != ' '){
+						*writePointer=*readPointer;
+						writePointer++;
+						state=1;
+					}
+					break;
+		
+		}
+		if(*readPointer == '\0'){ //reached the end of the string
+			break;
+		}
+		
+		readPointer++;
+		
+	}
+	
+	
+}
 
 //The callback function is call, if we receive any message
 void callback(char* topic, byte* payload, unsigned int length) {

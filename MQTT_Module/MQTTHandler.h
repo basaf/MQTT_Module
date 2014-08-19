@@ -24,4 +24,5 @@ error_t checkConnectionAndReconnectMQTT();
 error_t mqttSendTemp(void);
 void mqttLoopFunction();
 
+
 #endif /* MQTTHANDLER_H_ */

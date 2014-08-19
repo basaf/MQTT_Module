@@ -39,10 +39,10 @@ void setup() {
 	configInit();
 	tempSenosrsInit(globalConfig.resolution);
 	wifiComInit(globalConfig.ssid, globalConfig.pass);
-	//wifiComInit("ArduinoNet","ArduinoNet");
 	mqttInit();
 
 	Serial.println(F("Initialization done"));
+	
 }
 void loop() {
 	unsigned long now;
