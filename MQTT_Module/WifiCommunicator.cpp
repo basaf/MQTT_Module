@@ -12,7 +12,7 @@
 
 //internal Prototypes
 void printTheWifiStatus();
-	
+
 
 /************************************************************************/
 /*! Initialize the WiFi-Shield with ssid, password and local

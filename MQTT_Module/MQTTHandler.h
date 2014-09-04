@@ -23,6 +23,7 @@ error_t mqttInit(uint8_t pServer[4], uint16_t pPort);
 error_t checkConnectionAndReconnectMQTT();
 error_t mqttSendTemp(void);
 void mqttLoopFunction();
+void mqttStop(void);
 
 
 #endif /* MQTTHANDLER_H_ */

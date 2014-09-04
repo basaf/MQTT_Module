@@ -43,7 +43,7 @@ void configInit(){
 		configMode();
 	}
 	
-	
+	sendConfig(&globalConfig);
 }
 
 /*!

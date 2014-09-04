@@ -47,7 +47,23 @@ void setup() {
 void loop() {
 	unsigned long now;
 	static unsigned long lastSendTime;
-	checkConnectionAndReconnectMQTT();
+	
+	if(checkConnectionAndReconnectMQTT()){
+		//error: we should restart 
+		Serial.println(F("Stop and restart MQTT... "));
+		mqttStop();
+		delay(1000);
+		mqttInit();
+		//check again
+		if(checkConnectionAndReconnectMQTT()){
+			Serial.println(F("FAILED!"));
+			delay(1000);
+			return;
+		}
+		else{
+			Serial.println(F("done!"));		
+		}
+	}
 	
 	now=millis();
 	if((now-lastSendTime) >=globalConfig.sendInterval){	//the overflow of millis() is not harming the calculation

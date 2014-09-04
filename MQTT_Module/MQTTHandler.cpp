@@ -31,6 +31,11 @@ error_t mqttInit(void){
 	return mqttInit(server,MQTT_DEFAULT_PORT);
 }
 
+void mqttStop(void){
+	mqttClient.disconnect();
+	wifiClient.stop();
+}
+
 error_t mqttInit(uint8_t pServer[4], uint16_t pPort){
 	
 	mqttClient=PubSubClient(pServer, pPort, callback, wifiClient);
@@ -39,15 +44,18 @@ error_t mqttInit(uint8_t pServer[4], uint16_t pPort){
 		Serial.println(F("MQTT initial connection Failed!"));
 		return error;
 	}
-		
+	
+	//maybe find a better location for initializing the output pin
+	pinMode(2,OUTPUT);
+	digitalWrite(2,LOW);
 	return ERR_NO_ERR;
 }
 
 error_t checkConnectionAndReconnectMQTT(){
 
 	if(!mqttClient.connected()) {
-		Serial.println(F("Connection lost. Reconnect..."));
-		connectAndSubscribe();	
+		Serial.println(F("No connection. Reconnect..."));
+		return connectAndSubscribe();	
 	}
 	
 	return ERR_NO_ERR;
@@ -68,6 +76,9 @@ error_t connectAndSubscribe(void){
 	
 	//topic for subscribing
 	snprintf(topic,sizeof(topic),"/asn/config/%i",globalConfig.id);
+	mqttClient.subscribe(topic);
+	
+	snprintf(topic,sizeof(topic),"/asn/%i/switch/",globalConfig.id);
 	mqttClient.subscribe(topic);
 	
 	return ERR_NO_ERR;
@@ -134,11 +145,28 @@ void removeSpacesFromString(char *pString, uint16_t pStringLength){
 }
 
 //The callback function is call, if we receive any message
-void callback(char* topic, byte* payload, unsigned int length) {
+void callback(char* pTopic, byte* payload, unsigned int length) {
 
-	if(!strcmp(topic,"blackboard/1/out"))
-	Serial.print("Unknown: ");
-	
+	char topic_s[MQTT_MAX_TOPIC_LENGTH];
+		
+	snprintf(topic_s,sizeof(topic_s),"/asn/%i/switch",globalConfig.id);
+		
+	if(!strcmp(pTopic,topic_s)){
+		
+		int state=atoi((char *)payload);
+		digitalWrite(2,state);
+	}
+	else{
+		snprintf(topic_s,sizeof(topic_s),"/asn/config/%i",globalConfig.id);	
+		if(!strcmp(pTopic,topic_s)){
+			Serial.println(F("config"));
+		}
+		else{
+			Serial.println(F("Received unknown but registered topic:"));
+			Serial.println(pTopic);
+		}
+	}
+	Serial.println(pTopic);
 	Serial.write(payload,length);
 	Serial.println("");
 }
