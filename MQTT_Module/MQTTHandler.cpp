@@ -33,6 +33,7 @@ error_t mqttInit(void){
 
 void mqttStop(void){
 	mqttClient.disconnect();
+	wifiClient.flush();
 	wifiClient.stop();
 }
 

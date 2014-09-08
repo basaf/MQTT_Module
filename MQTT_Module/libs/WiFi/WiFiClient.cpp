@@ -14,7 +14,8 @@ extern "C" {
 
 uint16_t WiFiClient::_srcport = 1024;
 
-WiFiClient::WiFiClient() : _sock(MAX_SOCK_NUM) {
+//WiFiClient::WiFiClient() : _sock(MAX_SOCK_NUM) {	//test with 255
+WiFiClient::WiFiClient() : _sock(255){				//Fix for Mqtt connected() function
 }
 
 WiFiClient::WiFiClient(uint8_t sock) : _sock(sock) {
@@ -43,7 +44,8 @@ int WiFiClient::connect(IPAddress ip, uint16_t port) {
     		delay(1);
 
     	if (!connected())
-       	{
+       	{	
+			WiFiClass::_state[_sock]=-1;	//FIX: This line should fix the release of sockets in case of a failure.(https://github.com/arduino/Arduino/issues/1720)
     		return 0;
     	}
     }else{
@@ -85,7 +87,7 @@ size_t WiFiClient::write(const uint8_t *buf, size_t size) {
 }
 
 int WiFiClient::available() {
-  if (_sock != 255)
+  if (_sock != 255)	
   {
       return ServerDrv::availData(_sock);
   }
@@ -144,8 +146,8 @@ uint8_t WiFiClient::connected() {
   if (_sock == 255) {
     return 0;
   } else {
-    uint8_t s = status();
 
+    uint8_t s = status();
     return !(s == LISTEN || s == CLOSED || s == FIN_WAIT_1 ||
     		s == FIN_WAIT_2 || s == TIME_WAIT ||
     		s == SYN_SENT || s== SYN_RCVD ||

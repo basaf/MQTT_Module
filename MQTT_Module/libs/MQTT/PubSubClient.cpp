@@ -422,7 +422,7 @@ boolean PubSubClient::connected() {
    } else {
       rc = (int)_client->connected();
 	  //Serial.println(rc); //it is 0 the first time it is called!!!
-      //if (!rc) _client->stop();	//TODO Generating a Bug because of the WiFi Client Library http://stackoverflow.com/questions/20339952/mosquitto-socket-read-error-arduino-client
+      if (!rc) _client->stop();	//TODO Generating a Bug because of the WiFi Client Library http://stackoverflow.com/questions/20339952/mosquitto-socket-read-error-arduino-client
    }
    return rc;
 }
