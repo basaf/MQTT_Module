@@ -12,6 +12,7 @@
 #include <PubSubClient.h>
 #include <WiFi.h>
 #include "TempSensor.h"
+#include "ADConverter.h"
 #include "Config.h"
 #include "WifiCommunicator.h"
 #include "MQTTHandler.h"
@@ -36,7 +37,9 @@ void setup() {
 	Serial.println(freeMemory());
 	delay(200);
 	
+	adcInit();
 	configInit();
+	
 	tempSenosrsInit(globalConfig.resolution);
 	wifiComInit(globalConfig.ssid, globalConfig.pass);
 	mqttInit();
@@ -46,7 +49,7 @@ void setup() {
 }
 void loop() {
 	unsigned long now;
-	static unsigned long lastSendTime;
+	static unsigned long lastSendTimeTemp, lastSendTimeAdc;
 	
 	if(checkConnectionAndReconnectMQTT()){
 		//error: we should restart 
@@ -66,12 +69,26 @@ void loop() {
 	}
 	
 	now=millis();
-	if((now-lastSendTime) >=globalConfig.sendInterval){	//the overflow of millis() is not harming the calculation
+	
+	//temp
+	if((now-lastSendTimeTemp) >= globalConfig.sendIntervalTemp){	//the overflow of millis() is not harming the calculation
+
 		tempSensorRead();
 		tempSensorPrintTable();
 		mqttSendTemp();
 		Serial.println("------------");
-		lastSendTime=now;
+		lastSendTimeTemp=now;
 	}
+	//adc
+	if((now-lastSendTimeAdc) >= globalConfig.sendIntervalAdc){	//the overflow of millis() is not harming the calculation
+
+		adcRead();
+		adcPrintTable();
+		mqttSendADC();
+		Serial.println("------------");
+		lastSendTimeAdc=now;
+	}
+	
+	
 	mqttLoopFunction();	//MQTT client loop processing for keep alive messages
 }

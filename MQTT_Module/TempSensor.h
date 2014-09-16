@@ -22,7 +22,7 @@ struct tableEntry_s{
 	uint8_t address[8];
 	uint8_t tempSensorID;
 	float sensorValue;
-	uint8_t state;
+	uint8_t enabled;
 
 	} typedef tableEntry_t;
 

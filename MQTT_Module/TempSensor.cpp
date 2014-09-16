@@ -124,7 +124,7 @@ void tempSensorPrintTable(){
 		
 		Serial.print(" - "); Serial.print(tempSensorTable.tableEntry[i].tempSensorID);
 		Serial.print(" - "); Serial.print(tempSensorTable.tableEntry[i].sensorValue);
-		Serial.print(" - "); Serial.println(tempSensorTable.tableEntry[i].state);
+		Serial.print(" - "); Serial.println(tempSensorTable.tableEntry[i].enabled);
 	}
 }
 
@@ -150,7 +150,7 @@ error_t createAddressTable(void){
 		if(sensors.getAddress(address, i)){
 			memcpy(tempSensorTable.tableEntry[index].address,address,sizeof(address));
 			tempSensorTable.tableEntry[index].tempSensorID=i;
-			tempSensorTable.tableEntry[index].state=1;		//default: send temp sensor value
+			tempSensorTable.tableEntry[index].enabled=1;		//default: send temp sensor value
 			++index;	
 		}
 	}
@@ -251,7 +251,7 @@ tableEntry_t * serachIdInSensorTable(const uint8_t id, tempSensorTable_t* table)
 error_t turnAllTempSensorsOff(){
 	
 	for(int i=0; i < tempSensorTable.size;i++){
-		tempSensorTable.tableEntry[i].state=0;
+		tempSensorTable.tableEntry[i].enabled=0;
 	}
 	return ERR_NO_ERR;
 }
@@ -262,7 +262,7 @@ error_t turnAllTempSensorsOff(){
 */
 error_t turnAllTempSensorsOn(){
 	for(int i=0; i < tempSensorTable.size;i++){
-		tempSensorTable.tableEntry[i].state=1;
+		tempSensorTable.tableEntry[i].enabled=1;
 	}
 	return ERR_NO_ERR;
 }

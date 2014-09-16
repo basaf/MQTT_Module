@@ -10,6 +10,7 @@
 #include <PubSubClient.h>
 #include <WiFi.h>
 #include "TempSensor.h"
+#include "ADConverter.h"
 //#include "MemoryFree.h"
 #include "Config.h"
 #include <stdlib.h>
@@ -25,6 +26,7 @@ PubSubClient mqttClient;
 byte server[] = { 192, 168, 75, 50 }; //default Ip
 
 extern tempSensorTable_t tempSensorTable;
+extern adcValue_t adcValues;
 extern config_t globalConfig;
 
 error_t mqttInit(void){
@@ -95,16 +97,35 @@ error_t mqttSendTemp(){
 
 	char topic_s[MQTT_MAX_TOPIC_LENGTH];
 	char sensorValue_s[MQTT_MAX_VALUE_STRING_LENGTH];
-	
+
 	for(int i=0; i<tempSensorTable.size;i++){
-		if(tempSensorTable.tableEntry[i].state == 1){
+		if(tempSensorTable.tableEntry[i].enabled == 1){
 
 			snprintf(topic_s,sizeof(topic_s),"/asn/%i/temp/%i/value",globalConfig.id,tempSensorTable.tableEntry[i].tempSensorID);
 			
 			dtostrf(tempSensorTable.tableEntry[i].sensorValue,sizeof(sensorValue_s)-3,2,sensorValue_s); //-3 -> for "-","."and "\0"
 			removeSpacesFromString(sensorValue_s,sizeof(sensorValue_s));
+			
 			mqttClient.publish(topic_s,sensorValue_s);
 						
+		}
+	}
+}
+
+error_t mqttSendADC(){
+
+	char topic_s[MQTT_MAX_TOPIC_LENGTH];
+	char sensorValue_s[MQTT_MAX_VALUE_STRING_LENGTH];
+
+	for(uint8_t i=0; i<MAX_ADC_VALUES; i++){
+		if(adcValues.enabled[i] == 1){
+
+			snprintf(topic_s,sizeof(topic_s),"/asn/%i/adc/%i/value",globalConfig.id,i);
+			
+			dtostrf(adcValues.voltage[i],sizeof(sensorValue_s)-3,2,sensorValue_s); //-3 -> for "-","."and "\0"
+			removeSpacesFromString(sensorValue_s,sizeof(sensorValue_s));	
+			mqttClient.publish(topic_s,sensorValue_s);
+			
 		}
 	}
 }

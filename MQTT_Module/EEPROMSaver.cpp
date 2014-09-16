@@ -95,6 +95,21 @@ void setFlagInEEPROM(uint8_t pFlag)
 	EEPROM.write(FLAG_REGION,flags);
 }
 
+error_t loadADCTableFromEEPROM(uint8_t *pAdcValues){
+	
+	if(!testEEPROMForValidFlag(ADC_VALUE_TABLE_VALID_FLAG)){
+		readBlockFromMyEEPROM(pAdcValues,MAX_ADC_VALUES,ADC_TABLE_MEMORY_ADDRESS);
+		return ERR_NO_ERR;
+	}
+
+	return ERR_EEPROM_NO_VALID_ADC_TABLE;
+}
+error_t writeADCTableToEEPROM(uint8_t *pAdcValues){
+	writeBlockToMyEEPROM(pAdcValues,MAX_ADC_VALUES, ADC_TABLE_MEMORY_ADDRESS);
+	setFlagInEEPROM(ADC_VALUE_TABLE_VALID_FLAG);
+	return ERR_NO_ERR;
+}
+
 error_t loadAddressTableFromEEPROM(tempSensorTable_t *pSensorTable){
 	
 	if(!testEEPROMForValidFlag(TEMP_SENS_TABLE_VALID_FLAG)){

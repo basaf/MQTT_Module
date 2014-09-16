@@ -7,6 +7,7 @@
 #include <Arduino.h>
 #include "Config.h"
 #include "TempSensor.h"
+#include "ADConverter.h"
 #include "EEPROMSaver.h"
 
 //Prototyps
@@ -16,7 +17,8 @@ error_t checkForSerialControlString();
 error_t configMode(void);
 error_t checkGlobalConfig(void);
 error_t setGlobalId(uint8_t id);
-error_t setSendInterval(const uint32_t pInterval);
+error_t setSendIntervalTemp(const uint32_t pInterval);
+error_t setSendIntervalADC(const uint32_t pInterval);
 //Globals
 config_t globalConfig;
 
@@ -103,10 +105,10 @@ error_t checkForSerialControlString(){
 		else if(!strcmp(buffer, "show config")){
 			sendConfig(&globalConfig);
 		}
-		else if(!strcmp(buffer, "set sensors states")){
+		else if(!strcmp(buffer, "temp sensors enable")){
 			turnAllTempSensorsOn();
 		}
-		else if(!strcmp(buffer, "rm sensors states")){
+		else if(!strcmp(buffer, "temp sensors disable")){
 			turnAllTempSensorsOff();
 		}
 		else if(strstr(buffer, "set id")){
@@ -122,7 +124,7 @@ error_t checkForSerialControlString(){
 				setGlobalId(id);
 			}
 		}
-		else if(strstr(buffer, "set interval")){
+		else if(strstr(buffer, "set interval temp")){
 			char * ptr;
 			uint32_t time;
 			int sens;
@@ -132,7 +134,52 @@ error_t checkForSerialControlString(){
 			if(ptr != NULL){
 				//convert
 				time=atoi(ptr);
-				setSendInterval(time);
+				setSendIntervalTemp(time);
+			}
+		}
+		//else if(!strcmp(buffer, "adc enable")){
+			//turnAllAdcOn();
+		//}
+		//else if(!strcmp(buffer, "adc disable")){
+			//turnAllAdcOff();
+		//}
+		else if(strstr(buffer, "adc disable")){
+			char * ptr;
+			uint8_t number;
+			int sens;
+			strtok(buffer," ");
+			strtok(NULL," ");
+			ptr=strtok(NULL," ");
+			if(ptr != NULL){
+				//convert
+				number=atoi(ptr);
+				turnAdcOff(number);
+			}
+		}
+		else if(strstr(buffer, "adc enable")){
+			char * ptr;
+			uint8_t number;
+			int sens;
+			strtok(buffer," ");
+			strtok(NULL," ");
+			ptr=strtok(NULL," ");
+			if(ptr != NULL){
+				//convert
+				number=atoi(ptr);
+				turnAdcOn(number);
+			}
+		}
+		else if(strstr(buffer, "set interval adc")){
+			char * ptr;
+			uint32_t time;
+			int sens;
+			strtok(buffer," ");
+			strtok(NULL," ");
+			ptr=strtok(NULL," ");
+			if(ptr != NULL){
+				//convert
+				time=atoi(ptr);
+				setSendIntervalADC(time);
 			}
 		}
 		//else if(!strcmp(buffer, "set debug")){
@@ -147,12 +194,13 @@ error_t checkForSerialControlString(){
 			Serial.println(F("show config - prints the current configuration"));
 			Serial.println(F("reset config - resets the config to the default values"));
 			Serial.println(F("delete config - deletes the whole config from the EEPROM"));
-			Serial.println(F("set sensors states - every sensor value will be transmitted"));
-			Serial.println(F("rm sensors states - no sensor value will be transmitted"));
+			Serial.println(F("temp sensors enable - every temperature sensor value will be transmitted"));
+			Serial.println(F("temp sensors disable - no temperature sensor value will be transmitted"));
+			Serial.println(F("adc enable <channel>- adc value on defined channel  will be transmitted"));
+			Serial.println(F("adc disable <channel>- adc value on defined channel will NOT be transmitted"));
 			Serial.println(F("set id <newID>- sets the global ID of the node"));
-			Serial.println(F("set interval <time>- sets the send intval in milliseconds"));
-			//Serial.println(F("set debug - prints the current sensor values when the are sent"));
-			//Serial.println(F("rm debug - disable the printing of they sensor values"));
+			Serial.println(F("set interval temp <time>- sets the send interval in milliseconds for the temperature sensors"));
+			Serial.println(F("set interval adc <time>- sets the send interval in milliseconds for the adc"));
 			Serial.println(F("exit - leaves the config mode"));
 		}
 		else{
@@ -177,11 +225,18 @@ void sendConfig(config_t *pConfig){
 	Serial.println(pConfig->pass);
 	Serial.print(F("Global ID: "));
 	Serial.println(pConfig->id);
-	Serial.print(F("Send interval: "));
-	Serial.println(pConfig->sendInterval);
+//	Serial.println(F("------------------------------"));
+	Serial.print(F("Send interval for temperature sensors: "));
+	Serial.println(pConfig->sendIntervalTemp);
 	Serial.print(F("Resolution: "));
 	Serial.println(pConfig->resolution);
-	
+//	tempSensorPrintTable();
+//	Serial.println(F("------------------------------"));
+	Serial.print(F("Send interval for adc: "));
+	Serial.println(pConfig->sendIntervalAdc);
+//	adcPrintTable();
+	Serial.println(F("------------------------------"));
+	//Serial.println(F("------------------------------"));
 }
 
 /*!
@@ -200,11 +255,13 @@ void resetConfig(config_t *pConfig){
 	snprintf(pConfig->pass,PASS_LENGTH_MAX,"ArduinoNet");
 	snprintf(pConfig->ssid,SSID_LENGTH_MAX,"ArduinoNet");
 	pConfig->resolution=10;
-	pConfig->sendInterval=30000;
+	pConfig->sendIntervalTemp=30000;
+	pConfig->sendIntervalAdc=10000;
 	pConfig->version=1;
 	pConfig->id=99;
 	//turn all sensors Off
 	turnAllTempSensorsOn();
+	turnAllAdcOff();
 	writeConfigToEEPROM(pConfig);
 	Serial.println(F("Config is reseted to its default values"));
 }
@@ -222,9 +279,18 @@ error_t setGlobalId(uint8_t id){
 /*!
 *
 */
-error_t setSendInterval(const uint32_t pInterval){
+error_t setSendIntervalTemp(const uint32_t pInterval){
 	
-	globalConfig.sendInterval=pInterval;
+	globalConfig.sendIntervalTemp=pInterval;
+	writeConfigToEEPROM(&globalConfig);
+	return ERR_NO_ERR;
+}
+/*!
+*
+*/
+error_t setSendIntervalADC(const uint32_t pInterval){
+	
+	globalConfig.sendIntervalAdc=pInterval;
 	writeConfigToEEPROM(&globalConfig);
 	return ERR_NO_ERR;
 }
